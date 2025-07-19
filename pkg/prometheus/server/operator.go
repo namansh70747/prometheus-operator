@@ -1173,6 +1173,9 @@ func (c *Operator) createOrUpdateConfigurationSecret(ctx context.Context, logger
 		return fmt.Errorf("selecting ServiceMonitors failed: %w", err)
 	}
 
+	// Update ServiceMonitor status subresource when the feature gate is enabled.
+	c.updateServiceMonitorStatus(ctx, p, smons)
+
 	pmons, err := resourceSelector.SelectPodMonitors(ctx, c.pmonInfs.ListAllByNamespace)
 	if err != nil {
 		return fmt.Errorf("selecting PodMonitors failed: %w", err)
