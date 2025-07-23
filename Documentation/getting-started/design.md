@@ -88,4 +88,24 @@ The `ServiceMonitor` CRD defines how a dynamic set of services should be monitor
 
 #### PodMonitor
 
-The `PodMonitor` CRD defines how a dynamic set of pods should be monitored. The `
+The `PodMonitor` CRD defines how a dynamic set of pods should be monitored. The `PodMonitor` object discovers these pods and generates the relevant configuration for the Prometheus server to monitor them. The pods selected to be monitored with the desired configuration is defined using label selections.
+
+#### Probe
+
+The `Probe` CRD defines how groups of ingresses and static targets should be monitored. Besides the target, the `Probe` object requires a `prober` which is the service that monitors the target and provides metrics for Prometheus to scrape. Typically, this is achieved using the [blackbox exporter](https://github.com/prometheus/blackbox_exporter).
+
+#### ScrapeConfig
+
+The `ScrapeConfig` CRD allows you to define how Prometheus should discover and scrape metrics from target services. You can use the `ScrapeConfig` CRD to scrape targets external to the Kubernetes cluster or to create scrape configurations that are not possible with the higher-level `ServiceMonitor`, `Probe`, or `PodMonitor` resources. Both the `Prometheus` and `PrometheusAgent` CRDs have a `scrapeConfigSelector` field, which needs to be set to a list of labels to match ScrapeConfigs.
+
+#### AlertmanagerConfig
+
+![AlertmanagerConfig](../img/alertmanager-config.png)
+
+The `AlertmanagerConfig` CRD allows us to configure `Alertmanager` instances in a Kubernetes cluster. It specifies subsections of the Alertmanager configuration, enabling the routing of alerts to custom receivers and the setting of inhibition rules.
+
+#### PrometheusRule
+
+![Prometheus Rule](../img/prometheus-rule.png)
+
+The `PrometheusRule` CRD allows the definition of alerting and recording rules to be consumed by Prometheus or Thanos Ruler instances. Alerts and recording rules are reconciled by the Operator and dynamically loaded without requiring a restart of Prometheus or Thanos Ruler.
