@@ -18,20 +18,20 @@ The Prometheus Operator is a Kubernetes Operator that automates the deployment, 
 
 - **Custom Resource Management:** The Operator introduces and manages several CRDs, such as `Prometheus`, `Alertmanager`, `ThanosRuler`, `PrometheusAgent`, `ServiceMonitor`, `PodMonitor`, `Probe`, `ScrapeConfig`, `AlertmanagerConfig`, and `PrometheusRule`. These CRDs allow users to declaratively define monitoring infrastructure and scrape configurations in a Kubernetes-native way.
 
-- **Reconciliation Loop:** At the heart of the Operator is a reconciliation loop. The Operator continuously watches for changes to its managed CRDs and associated Kubernetes resources (e.g., StatefulSets, Services, ConfigMaps, Secrets). When a change is detected (creation, update, or deletion), the Operator reconciles the actual state of the cluster to match the desired state specified in the CRDs. This ensures that Prometheus and related components are always correctly configured and running as intended.
+- **Reconciliation Loop:** At the heart of the Operator is a reconciliation loop that continuously monitors changes to its managed CRDs and associated Kubernetes resources, such as StatefulSets, Services, ConfigMaps, Secrets and so on. When a change is detected (creation, update, or deletion), the Operator compares the current state of the cluster with the desired state defined in the CRDs and takes the necessary actions to bring them into alignment. This ensures that Prometheus and related components remain correctly configured and consistently running as intended.
 
 - **Controllers:** The Operator is composed of multiple controllers, each responsible for a specific resource type (e.g., Prometheus, Alertmanager, ThanosRuler). Each controller:
   - Watches for changes to its CRD and related resources.
   - Validates and processes the resource specification.
   - Creates, updates, or deletes Kubernetes resources (such as StatefulSets, DaemonSets, Services, and ConfigMaps) to realize the desired state.
-  - Handles configuration reloads and rolling updates in a safe and automated manner.
+  - Manages configuration reloads and rolling updates in a safe, automated, and non-disruptive manner.
 
 - **Resource Management:**
-  - For each `Prometheus`, `Alertmanager`, or `ThanosRuler` resource, the Operator creates and manages the corresponding StatefulSet (or DaemonSet for PrometheusAgent in DaemonSet mode), Service, and configuration resources.
-  - The Operator automatically generates Prometheus configuration based on `ServiceMonitor`, `PodMonitor`, `Probe`, and `ScrapeConfig` resources selected by the user, abstracting away the complexity of manual configuration.
-  - It manages secrets and RBAC resources required for secure operation.
+  - For each `Prometheus`, `Alertmanager`, or `ThanosRuler` resource, the Operator creates and manages the corresponding StatefulSet (or DaemonSet for PrometheusAgent when in DaemonSet mode), along with supporting Services and configuration resources.
+  - It automatically generates Prometheus service discovery configuration based on `ServiceMonitor`, `PodMonitor`, `Probe`, and `ScrapeConfig` Custom Resources, abstracting away the complexity of manual configuration.
+  - Additionally, the Operator handles the creation and maintenance of Secrets and RBAC resources required for secure operation.
 
-- **Validation and Safety:** The Operator performs validation of custom resources and ensures safe updates, minimizing downtime and configuration errors. It also supports admission webhooks for additional validation and mutation of resources.
+- **Validation and Safety:** The Operator performs validation of custom resources and ensures safe updates, minimizing downtime and configuration errors. It also supports Admission Webhooks for additional validation and mutation of resources.
 
 - **Extensibility:** The Operator is designed to be extensible, supporting new CRDs and features as the Prometheus ecosystem evolves.
 
@@ -88,24 +88,4 @@ The `ServiceMonitor` CRD defines how a dynamic set of services should be monitor
 
 #### PodMonitor
 
-The `PodMonitor` CRD defines how a dynamic set of pods should be monitored. The `PodMonitor` object discovers these pods and generates the relevant configuration for the Prometheus server to monitor them. The pods selected to be monitored with the desired configuration is defined using label selections.
-
-#### Probe
-
-The `Probe` CRD defines how groups of ingresses and static targets should be monitored. Besides the target, the `Probe` object requires a `prober` which is the service that monitors the target and provides metrics for Prometheus to scrape. Typically, this is achieved using the [blackbox exporter](https://github.com/prometheus/blackbox_exporter).
-
-#### ScrapeConfig
-
-The `ScrapeConfig` CRD allows you to define how Prometheus should discover and scrape metrics from target services. You can use the `ScrapeConfig` CRD to scrape targets external to the Kubernetes cluster or to create scrape configurations that are not possible with the higher-level `ServiceMonitor`, `Probe`, or `PodMonitor` resources. Both the `Prometheus` and `PrometheusAgent` CRDs have a `scrapeConfigSelector` field, which needs to be set to a list of labels to match ScrapeConfigs.
-
-#### AlertmanagerConfig
-
-![AlertmanagerConfig](../img/alertmanager-config.png)
-
-The `AlertmanagerConfig` CRD allows us to configure `Alertmanager` instances in a Kubernetes cluster. It specifies subsections of the Alertmanager configuration, enabling the routing of alerts to custom receivers and the setting of inhibition rules.
-
-#### PrometheusRule
-
-![Prometheus Rule](../img/prometheus-rule.png)
-
-The `PrometheusRule` CRD allows the definition of alerting and recording rules to be consumed by Prometheus or Thanos Ruler instances. Alerts and recording rules are reconciled by the Operator and dynamically loaded without requiring a restart of Prometheus or Thanos Ruler.
+The `PodMonitor` CRD defines how a dynamic set of pods should be monitored. The `
